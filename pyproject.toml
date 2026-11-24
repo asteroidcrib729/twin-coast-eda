@@ -1,0 +1,37 @@
+[project]
+name = "twin-coast-eda"
+version = "0.1.0"
+description = "Comparative coastal weather web scraping, data cleaning, and exploratory data analysis for Karachi vs. Mumbai."
+readme = "README.md"
+requires-python = ">=3.14.7,<3.15"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Faraz Hussain" },
+]
+dependencies = [
+  "beautifulsoup4>=4.15.0,<5.0",
+  "ipykernel>=7.2.0,<8.0",
+  "ipython>=9.11.0,<10.0",
+  "jupyter-client>=8.8.0,<9.0",
+  "matplotlib>=3.11.2,<4.0",
+  "numpy>=2.5.5,<3.0",
+  "pandas>=3.1.1,<4.0",
+  "requests>=2.34.2,<3.0",
+  "seaborn>=0.13.2,<1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pandas-stubs>=3.1.0.261029",
+  "types-beautifulsoup4>=4.12.0.20250516",
+  "types-requests>=2.33.0.20261030",
+  "types-seaborn>=0.13.2.20261122",
+]
+
+[tool.ruff]
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "UP", "BLE", "PIE"]
+ignore = ["E501"]

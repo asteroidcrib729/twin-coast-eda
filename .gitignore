@@ -1,0 +1,27 @@
+# Local-only notes & playbook
+.local/
+
+# Python caches & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments (project uses global Python 3.14.7)
+.venv/
+venv/
+env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Editor / OS clutter (keep shared .vscode/settings.json & extensions.json)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+desktop.ini
