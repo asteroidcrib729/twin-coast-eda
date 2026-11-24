@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Pyrefly type check
         run: |
-          python -c "import pathlib, sys; p = pathlib.Path('pyrefly.toml'); txt = p.read_text(encoding='utf-8'); lines = [l for l in txt.splitlines() if not l.startswith(('python-interpreter-path', 'site-package-path'))]; p.write_text('\n'.join(lines) + '\n', encoding='utf-8')"
+          python -c "import pathlib, re; p = pathlib.Path('pyrefly.toml'); txt = p.read_text(encoding='utf-8'); txt = re.sub(r'(?m)^python-interpreter-path\s*=.*\n?', '', txt); txt = re.sub(r'(?ms)^site-package-path\s*=\s*\[.*?\]\n?', '', txt); p.write_text(txt, encoding='utf-8')"
           pyrefly check
 
       - name: Run unit & deliverable verification tests
