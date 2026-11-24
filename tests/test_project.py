@@ -46,7 +46,7 @@ class TestProjectDeliverables(unittest.TestCase):
 
         self.assertEqual(nb["metadata"]["language_info"]["version"], "3.14.7")
         code_cells = [c for c in nb["cells"] if c.get("cell_type") == "code"]
-        self.assertEqual(len(code_cells), 12)
+        self.assertEqual(len(code_cells), 13)
 
         for index, cell in enumerate(code_cells, start=1):
             source = "".join(cell.get("source", []))
@@ -160,6 +160,7 @@ class TestProjectDeliverables(unittest.TestCase):
             "Humidity_Distribution.png",
             "Wind_Pressure_Comparison.png",
             "Model_Evaluation.png",
+            "Forecast_Demonstration.png",
         ]
         for filename in png_files:
             path = ROOT / "visualizations" / filename

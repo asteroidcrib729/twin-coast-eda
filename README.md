@@ -25,6 +25,9 @@ through `2025-12-31`, `70,128` observations) between **Karachi, Pakistan** and
      `2022–2024` train / `2025` unseen test split, model benchmarking,
      evaluation chart (`Model_Evaluation.png`), and saving
      `model/coastal_weather_temp_forecaster.pkl`
+  7. **Trained Model Inference Demonstration** — Reloading the `.pkl` bundle,
+     running unseen 2025 seasonal spot-checks and custom observation inference,
+     and plotting a 7-day forecast trace (`Forecast_Demonstration.png`)
 - `dataset/`
   - `karachi_raw.csv` — 4-year Open-Meteo hourly archive for Karachi
     (`35,064` rows × `11` columns)
@@ -44,6 +47,7 @@ through `2025-12-31`, `70,128` observations) between **Karachi, Pakistan** and
   - `Humidity_Distribution.png`
   - `Wind_Pressure_Comparison.png`
   - `Model_Evaluation.png`
+  - `Forecast_Demonstration.png`
   - `WEATHER_COMPARISON_REPORT.html` — Self-contained HTML report exported from
     the executed notebook
   - `WEATHER_COMPARISON_REPORT.pdf` — Printable PDF version of the full report
