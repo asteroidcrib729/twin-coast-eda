@@ -1,7 +1,7 @@
 [project]
 name = "twin-coast-eda"
-version = "0.1.0"
-description = "Comparative coastal weather web scraping, data cleaning, and exploratory data analysis for Karachi vs. Mumbai."
+version = "0.2.0"
+description = "Long-term Open-Meteo weather data pipeline, exploratory climate analysis, and +6h temperature forecasting for Karachi vs. Mumbai."
 readme = "README.md"
 requires-python = ">=3.14.7,<3.15"
 license = "MIT"
@@ -10,21 +10,21 @@ authors = [
   { name = "Faraz Hussain" },
 ]
 dependencies = [
-  "beautifulsoup4>=4.15.0,<5.0",
   "ipykernel>=7.2.0,<8.0",
   "ipython>=9.11.0,<10.0",
+  "joblib>=1.6.0,<2.0",
   "jupyter-client>=8.8.0,<9.0",
   "matplotlib>=3.11.2,<4.0",
   "numpy>=2.5.5,<3.0",
   "pandas>=3.1.1,<4.0",
   "requests>=2.34.2,<3.0",
+  "scikit-learn>=1.9.1,<2.0",
   "seaborn>=0.13.2,<1.0",
 ]
 
 [project.optional-dependencies]
 dev = [
   "pandas-stubs>=3.1.0.261029",
-  "types-beautifulsoup4>=4.12.0.20250516",
   "types-requests>=2.33.0.20261030",
   "types-seaborn>=0.13.2.20261122",
 ]

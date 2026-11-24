@@ -1,32 +1,41 @@
-# Twin Coast EDA — Coastal Weather Comparison (Karachi vs. Mumbai)
+# Twin Coast EDA — Coastal Weather Comparison & Forecasting
 
-An end-to-end web scraping, data cleaning, and exploratory climate analysis
-project comparing winter coastal weather dynamics between **Karachi, Pakistan**
-and **Mumbai, India** using historical hourly observations and 14-day forecast
-data (`2025-12-16` through `2026-01-12`).
+An end-to-end data engineering, exploratory climate analysis, and machine
+learning project comparing 4 years of hourly coastal weather (`2022-01-01`
+through `2025-12-31`, `70,128` observations) between **Karachi, Pakistan** and
+**Mumbai, India** using the **Open-Meteo Historical Weather API (ERA5)**.
 
 ## Project Structure
 
 - `twin-coast-eda.ipynb` — Unified Jupyter Notebook covering:
-  1. **Environment Setup** — Imports, directory creation, and visualization
-     styling
-  2. **Data Acquisition (Web Scraping)** — Scraping historical hourly tables
-     (`#wt-his`) and 14-day forecast tables (`#wt-ext`) from TimeAndDate
-     (`RUN_SCRAPER = False` by default to use cached CSVs)
-  3. **Data Cleaning & Integration** — Explicit timestamp parsing, numeric
-     coercion, deduplication, forward-fill imputation, and exporting
+  1. **Environment Setup** — Dependencies, output directories (`dataset/`,
+     `model/`, `visualizations/`), and plotting configuration
+  2. **Data Acquisition (Open-Meteo ERA5 API)** — Fetching 4 years of hourly
+     weather observations (`35,064` rows/city; `RUN_FETCH = False` by default
+     to use cached CSVs)
+  3. **Data Cleaning & Integration** — Explicit ISO-8601 timestamp parsing,
+     numeric coercion, deduplication, forward-fill imputation, and exporting
      `dataset/coastal_weather_cleaned.csv`
-  4. **Exploratory Data Analysis & Visualizations** — Summary statistics and 6
-     publication charts exported to `visualizations/`
+  4. **Exploratory Data Analysis & Visualizations** — Multi-year summary
+     statistics and 6 climate charts exported to `visualizations/`
   5. **Key Analytical Insights** — Early morning humidity, midday temperature
-     and barometric pressure, and rainfall event summaries
+     and pressure, and 4-year monsoon rainfall totals
+  6. **Predictive Modeling (+6h Temperature Forecasting)** — Causal lag,
+     rolling, and cyclical feature engineering (`21` predictors), chronological
+     `2022–2024` train / `2025` unseen test split, model benchmarking,
+     evaluation chart (`Model_Evaluation.png`), and saving
+     `model/coastal_weather_temp_forecaster.pkl`
 - `dataset/`
-  - `karachi_raw.csv` — Raw scraped observations for Karachi (`672` rows:
-    `658` historic, `14` forecast)
-  - `mumbai_raw.csv` — Raw scraped observations for Mumbai (`98` rows:
-    `84` historic, `14` forecast)
-  - `coastal_weather_cleaned.csv` — Cleaned and combined comparative dataset
-    (`770` rows × `10` columns, `0` missing values)
+  - `karachi_raw.csv` — 4-year Open-Meteo hourly archive for Karachi
+    (`35,064` rows × `11` columns)
+  - `mumbai_raw.csv` — 4-year Open-Meteo hourly archive for Mumbai
+    (`35,064` rows × `11` columns)
+  - `coastal_weather_cleaned.csv` — Cleaned and combined multi-year dataset
+    (`70,128` rows × `11` columns, `0` missing values)
+- `model/`
+  - `coastal_weather_temp_forecaster.pkl` — Serialized `HistGradientBoosting`
+    +6-hour temperature forecaster bundle (`joblib`, `0.44 MB`) with feature
+    contract and verified 2025 holdout metrics
 - `visualizations/`
   - `Temperature_Time_Series_Monthly.png`
   - `Temperature_Time_Series_Hourly.png`
@@ -34,14 +43,14 @@ data (`2025-12-16` through `2026-01-12`).
   - `Temperature_Distribution.png`
   - `Humidity_Distribution.png`
   - `Wind_Pressure_Comparison.png`
+  - `Model_Evaluation.png`
   - `WEATHER_COMPARISON_REPORT.html` — Self-contained HTML report exported from
     the executed notebook
-  - `WEATHER_COMPARISON_REPORT.pdf` — Printable PDF version of the weather
-    comparison report
+  - `WEATHER_COMPARISON_REPORT.pdf` — Printable PDF version of the full report
 - `tests/`
   - `test_project.py` — Automated `unittest` suite verifying configuration
-    files, notebook compilation and outputs, dataset invariants, summary
-    metrics, and visualization deliverables
+    files, notebook compilation/execution, dataset invariants, serialized model
+    inference, and visualization deliverables
 - `.github/workflows/ci.yml` — Continuous integration workflow running Ruff,
   Pyrefly, and `unittest` on Python `3.14`
 - `.python-version`, `pyproject.toml`, `requirements.txt`, `pyrefly.toml` —
@@ -104,25 +113,37 @@ This repository is configured to run directly on your **global Python
      jupyter notebook twin-coast-eda.ipynb
      ```
 
-   - Set `RUN_SCRAPER = True` in cell 4 only if you want to scrape fresh data
-     from TimeAndDate instead of using the cached CSVs in `dataset/`.
+   - Set `RUN_FETCH = True` in cell 4 only if you want to re-fetch live data
+     from the Open-Meteo Historical Weather API instead of using `dataset/`.
 
 ## Verified Deliverable Metrics Snapshot
 
-Computed directly from `dataset/coastal_weather_cleaned.csv` (`770`
-observations across `2025-12-16 00:00:00` to `2026-01-12 12:00:00`):
+### 4-Year Climate Summary (`2022-01-01` to `2025-12-31`, `n = 70,128`)
 
-| Metric | Karachi (`n = 672`) | Mumbai (`n = 98`) |
+| Metric | Karachi (`n = 35,064`) | Mumbai (`n = 35,064`) |
 | --- | :---: | :---: |
-| Mean Temperature (°C) | 19.90 | 26.84 |
-| Temperature Range (°C) | 13.00 – 32.00 | 24.00 – 30.00 |
-| Mean Humidity (%) | 44.09 | 57.38 |
-| Early Morning Humidity (5–8 AM, %) | 65.5 | 72.0 |
-| Midday Temperature (12–2 PM, °C) | 27.8 | 28.4 |
-| Mean Wind Speed (km/h) | 14.66 (median 2.50) | 28.04 (median 30.00) |
-| Mean Barometer (mbar) | 1014.23 | 1011.29 |
-| Midday Barometer (12–2 PM, mbar) | 1013.3 | 1010.5 |
-| Recorded Rainfall Events | 0 | 0 |
+| Mean Temperature (°C) | 26.36 | 26.99 |
+| Temperature Range (°C) | 8.90 – 41.60 | 14.30 – 41.30 |
+| Mean Humidity (%) | 67.41 | 71.02 |
+| Early Morning Humidity (5–8 AM, %) | 78.1 | 78.4 |
+| Midday Temperature (12–2 PM, °C) | 30.1 | 30.7 |
+| Mean Wind Speed (km/h) | 15.45 (median 14.30) | 11.34 (median 10.30) |
+| Mean Barometer (mbar) | 1007.81 | 1008.28 |
+| Recorded Rain Hours | 2,473 | 9,892 |
+| Cumulative Rainfall (mm) | 1,555.3 | 9,891.2 |
+
+### +6-Hour Temperature Forecasting (`2025` Unseen Holdout, `n = 17,508`)
+
+| Model | MAE (°C) | RMSE (°C) | R² |
+| --- | :---: | :---: | :---: |
+| Persistence Baseline (`T_t`) | 3.1892 | 4.1348 | -0.0657 |
+| Ridge Regression | 1.1558 | 1.5073 | 0.8584 |
+| Random Forest (`max_depth=14`) | 0.6877 | 0.9632 | 0.9422 |
+| **HistGradientBoosting** (Saved) | **0.6516** | **0.9064** | **0.9488** |
+
+Per-city 2025 holdout metrics for `model/coastal_weather_temp_forecaster.pkl`:
+Karachi `MAE = 0.6381°C` (`R² = 0.9619`) and Mumbai `MAE = 0.6651°C`
+(`R² = 0.9195`); serialized model reload parity `max_diff = 0.000000`.
 
 ## Troubleshooting
 
@@ -134,10 +155,9 @@ observations across `2025-12-16 00:00:00` to `2026-01-12 12:00:00`):
 - **Jupyter shows wrong or stale kernels in VS Code:** Confirm
   `.vscode/settings.json` includes `"jupyter.excludeUserSitePackages": false`
   and reload the VS Code window (`Developer: Reload Window`).
-- **Live web scraping fails or returns partial rows:** TimeAndDate may
-  rate-limit repeated requests or change HTML markup; keep
-  `RUN_SCRAPER = False` to reproduce all analysis and charts deterministically
-  from `dataset/`.
+- **Live Open-Meteo fetch times out or is offline:** Keep `RUN_FETCH = False`
+  to reproduce all data cleaning, EDA charts, model training, and reports
+  deterministically from `dataset/`.
 
 ## License
 
