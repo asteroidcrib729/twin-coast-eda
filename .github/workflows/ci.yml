@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Pyrefly, Ruff & Verification Tests (Python 3.14)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyrefly ruff
+
+      - name: Run Ruff lint checks
+        run: ruff check .
+
+      - name: Run Pyrefly type check
+        run: |
+          python -c "import pathlib, sys; p = pathlib.Path('pyrefly.toml'); txt = p.read_text(encoding='utf-8'); lines = [l for l in txt.splitlines() if not l.startswith(('python-interpreter-path', 'site-package-path'))]; p.write_text('\n'.join(lines) + '\n', encoding='utf-8')"
+          pyrefly check
+
+      - name: Run unit & deliverable verification tests
+        run: python -m unittest discover -s tests -v
